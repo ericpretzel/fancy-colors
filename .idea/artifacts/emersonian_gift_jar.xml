@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="emersonian gift:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/emersonian_gift_jar</output-path>
+    <root id="archive" name="emersonian gift.jar">
+      <element id="module-output" name="emersonian gift" />
+    </root>
+  </artifact>
+</component>
