@@ -55,6 +55,7 @@ public class QuadTree {
 			this.points
 				.values()
 				.stream()
+				.filter(p -> p.alpha >= 15)
 				.filter(r::contains)
 				.forEach(relevantPoints::add);
 			if (this.divided) {

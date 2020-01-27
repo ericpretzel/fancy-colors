@@ -4,9 +4,12 @@ import java.util.List;
 
 public class Point {
 
+	public static double dAlpha = 0;
+
 	public final int id;
 	public double x, y;
 	private double dX, dY;
+	double alpha;
 	public Polygon polygon;
 	public Color color;
 
@@ -16,6 +19,7 @@ public class Point {
 		this.y = y;
 		this.polygon = new Polygon();
 		this.color = color;
+		this.alpha = color.getAlpha();
 
 		dX = (0.025 + (Math.random() * 0.25)) * (Math.random() > 0.5 ? 1 : -1);
 		dY = (0.025 + (Math.random() * 0.25)) * (Math.random() > 0.5 ? 1 : -1);
@@ -24,6 +28,9 @@ public class Point {
 	void move() {
 		if (this.x + 5 >= Screen.WIDTH || this.x <= 0) dX *= -1;
 		if (this.y + 5 >= Screen.HEIGHT || this.y <= 0) dY *= -1;
+
+		alpha -= dAlpha;
+		this.color = new Color(this.color.getRed(), this.color.getGreen(), this.color.getBlue(), (int)alpha);
 
 		this.x += this.dX;
 		this.y += this.dY;

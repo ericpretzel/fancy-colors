@@ -6,8 +6,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Screen extends JPanel {
 
-    public static int WIDTH = 450;
-    public static int HEIGHT = 450;
+    public static int WIDTH = 600;
+    public static int HEIGHT = 400;
 
     final Map<Integer, Point> points;
     QuadTree quadTree;
@@ -49,33 +49,39 @@ public class Screen extends JPanel {
             }
         });
 
-        /*this.addKeyListener(new KeyAdapter() {
+        MouseAdapter adapter = new MouseAdapter() {
+            private boolean mousePressed = false;
+            private boolean fading = false;
+
             @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-                    points.clear();
+            public void mouseDragged(MouseEvent e) {
+                if (mousePressed) {
+                    int j = points.size() + 1;
+                    points.put(j, new Point(j, e.getX(), e.getY(), colors[(int) (Math.random() * colors.length)]));
                 }
             }
-        });*/
 
-        this.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 switch (e.getButton()) {
 
                     case MouseEvent.BUTTON1:
-                        for (int i = 0; i < 5; i++) {
-                            int j = points.keySet().size() + 1;
-                            points.put(j, new Point(j, e.getX(), e.getY(), colors[(int)(Math.random() * colors.length)]));
-                        }
+                        mousePressed = true;
                         break;
 
                     case MouseEvent.BUTTON3:
-                        points.values().forEach(p -> p.color = colors[(int)(Math.random() * colors.length)]);
+                        fading = !fading;
+                        Point.dAlpha = fading ? 0.5 : 0;
                         break;
 
                 }
             }
-        });
+            public void mouseReleased(MouseEvent e) {
+                mousePressed = false;
+            }
+
+        };
+        this.addMouseMotionListener(adapter);
+        this.addMouseListener(adapter);
     }
 
     public void paintComponent(Graphics g) {
@@ -93,9 +99,11 @@ public class Screen extends JPanel {
             SwingUtilities.invokeLater(this::repaint);
             points.values().forEach(quadTree::insert);
             points.forEach((i, point) -> {
-                points.replace(i, point);
-                point.move();
-                handleCollisions(point, quadTree);
+                if (point.alpha >= 0) {
+                    points.replace(i, point);
+                    point.move();
+                    handleCollisions(point, quadTree);
+                }
             });
             try {
                 Thread.sleep(10);
@@ -106,7 +114,7 @@ public class Screen extends JPanel {
     }
 
     void handleCollisions(Point p, QuadTree quadTree) {
-        Rect rect = new Rect(p.x, p.y, 100, 100);
+        Rect rect = new Rect(p.x, p.y, 80, 80);
         p.handleCollision(quadTree.query(rect, new HashSet<>()));
     }
 }
